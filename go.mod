@@ -1,3 +1,3 @@
-module github.com/wazazaby/gsmap
+module github.com/wazazaby/gs
 
-go 1.21.1
+go 1.21
