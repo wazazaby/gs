@@ -1,2 +1,2 @@
 # gs
-Package `gs` exposes a map with generic layer on top of `sync.Map`.
+Package `gs` exposes some of `sync` package's features with a generic layer on top to avoid dealing with `any`/`interface{}`.
