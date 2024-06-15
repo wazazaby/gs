@@ -5,5 +5,6 @@ Improved DevX (compile-time checks, and you avoid dealing with `any`/`interface{
 
 ## Supported types
 * [sync.Map](https://pkg.go.dev/sync#Map)
+* [sync.Pool](https://pkg.go.dev/sync#Pool)
 ## Supported subpackages
 * [singleflight](https://pkg.go.dev/golang.org/x/sync/singleflight)
