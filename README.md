@@ -8,3 +8,4 @@ Improved DevX (compile-time checks, and you avoid dealing with `any`/`interface{
 * [sync.Pool](https://pkg.go.dev/sync#Pool)
 ## Supported subpackages
 * [singleflight](https://pkg.go.dev/golang.org/x/sync/singleflight)
+* [atomic](https://pkg.go.dev/sync/atomic) (partially for now, only for `atomic.Value`)
