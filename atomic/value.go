@@ -10,24 +10,24 @@ func (v *Value[T]) CompareAndSwap(old T, new T) (swapped bool) {
 	return v.underlying.CompareAndSwap(old, new)
 }
 
-func (v *Value[T]) Load() T {
-	val := v.underlying.Load()
-	if val == nil {
+func (v *Value[T]) Load() (val T, loaded bool) {
+	l := v.underlying.Load()
+	if l == nil {
 		var zero T
-		return zero
+		return zero, false
 	}
-	return val.(T)
+	return l.(T), true
 }
 
 func (v *Value[T]) Store(val T) {
 	v.underlying.Store(val)
 }
 
-func (v *Value[T]) Swap(new T) T {
-	old := v.underlying.Swap(new)
-	if old == nil {
+func (v *Value[T]) Swap(new T) (old T, swapped bool) {
+	prev := v.underlying.Swap(new)
+	if prev == nil {
 		var zero T
-		return zero
+		return zero, false
 	}
-	return old.(T)
+	return prev.(T), true
 }
