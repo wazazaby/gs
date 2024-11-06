@@ -4,6 +4,19 @@ import (
 	"golang.org/x/sync/singleflight"
 )
 
+func mapResult[T any](inCh <-chan singleflight.Result, outCh chan<- Result[T]) {
+	result := <-inCh
+	var v T
+	if result.Val != nil {
+		v = result.Val.(T)
+	}
+	outCh <- Result[T]{
+		Val:    v,
+		Err:    result.Err,
+		Shared: result.Shared,
+	}
+}
+
 type Result[T any] struct {
 	Val    T
 	Err    error
@@ -25,27 +38,16 @@ func (g *Group[T]) Do(key string, fn func() (T, error)) (value T, err error, sha
 }
 
 func (g *Group[T]) DoChan(key string, fn func() (T, error)) <-chan Result[T] {
-	ch := g.underlying.DoChan(key, func() (any, error) {
+	resultCh := g.underlying.DoChan(key, func() (any, error) {
 		return fn()
 	})
 
-	resultCh := make(chan Result[T], 1)
+	ch := make(chan Result[T], 1)
 	go func() {
-		result := <-ch
-
-		var v T
-		if result.Val != nil {
-			v = result.Val.(T)
-		}
-
-		resultCh <- Result[T]{
-			Val:    v,
-			Err:    result.Err,
-			Shared: result.Shared,
-		}
+		mapResult(resultCh, ch)
 	}()
 
-	return resultCh
+	return ch
 }
 
 func (g *Group[T]) Forget(key string) {
