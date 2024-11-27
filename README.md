@@ -9,3 +9,5 @@ Improved DevX (compile-time checks, and you avoid dealing with `any`/`interface{
 ## Supported subpackages
 * [singleflight](https://pkg.go.dev/golang.org/x/sync/singleflight)
 * [atomic](https://pkg.go.dev/sync/atomic) (partially for now, only for `atomic.Value`)
+## Other
+`atomic.CloseSafeChan` is a chan wrapper that guarantees safe concurrent closing operations on the channel.
