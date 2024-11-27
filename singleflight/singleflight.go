@@ -41,12 +41,8 @@ func (g *Group[T]) DoChan(key string, fn func() (T, error)) <-chan Result[T] {
 	resultCh := g.underlying.DoChan(key, func() (any, error) {
 		return fn()
 	})
-
 	ch := make(chan Result[T], 1)
-	go func() {
-		mapResult(resultCh, ch)
-	}()
-
+	go mapResult(resultCh, ch)
 	return ch
 }
 
