@@ -1,6 +1,8 @@
 package atomic
 
 import (
+	"sync/atomic"
+
 	"golang.org/x/exp/constraints"
 )
 
@@ -13,3 +15,5 @@ type Integer[IntT constraints.Integer] interface {
 	Store(val IntT)
 	Swap(new IntT) (old IntT)
 }
+
+var _ Integer[uint64] = (*atomic.Uint64)(nil)
