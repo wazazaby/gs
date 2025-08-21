@@ -16,4 +16,10 @@ type Integer[IntT constraints.Integer] interface {
 	Swap(new IntT) (old IntT)
 }
 
-var _ Integer[uint64] = (*atomic.Uint64)(nil)
+var (
+	_ Integer[int32]   = (*atomic.Int32)(nil)
+	_ Integer[int64]   = (*atomic.Int64)(nil)
+	_ Integer[uint32]  = (*atomic.Uint32)(nil)
+	_ Integer[uint64]  = (*atomic.Uint64)(nil)
+	_ Integer[uintptr] = (*atomic.Uintptr)(nil)
+)
