@@ -3,6 +3,7 @@ package atomic
 import (
 	"io"
 	"iter"
+	"slices"
 	"sync/atomic"
 )
 
@@ -149,6 +150,37 @@ func (c *CloseSafeChan[T]) Len() int {
 // It simply calls [cap] on the underlying channel.
 func (c *CloseSafeChan[T]) Cap() int {
 	return cap(c.ch)
+}
+
+// AppendCollect appends all remaining values from the [CloseSafeChan]
+// instance to dst and returns the resulting slice.
+//
+// It blocks until the [CloseSafeChan] instance is closed and every buffered
+// value has been received, so callers should ensure the channel is closed to
+// avoid leaking goroutines.
+//
+// The destination slice is grown ahead of time to reduce allocations when
+// collecting buffered values.
+func (c *CloseSafeChan[T]) AppendCollect(dst []T) []T {
+	dst = slices.Grow(dst, len(c.ch))
+	for value := range c.ch {
+		dst = append(dst, value)
+	}
+	return dst
+}
+
+// Collect gathers all remaining values from the [CloseSafeChan] instance and
+// returns them in a freshly allocated slice.
+//
+// It blocks until the [CloseSafeChan] instance is closed and will return nil
+// if the channel buffer is empty when called.
+func (c *CloseSafeChan[T]) Collect() []T {
+	n := len(c.ch)
+	if n == 0 {
+		return nil
+	}
+	dst := make([]T, 0, n)
+	return c.AppendCollect(dst)
 }
 
 var (
