@@ -6,14 +6,20 @@ import (
 	"golang.org/x/exp/constraints"
 )
 
-type Integer[IntT constraints.Integer] interface {
-	Add(delta IntT) (new IntT)
-	And(mask IntT) (old IntT)
-	CompareAndSwap(old IntT, new IntT) (swapped bool)
-	Load() IntT
-	Or(mask IntT) (old IntT)
-	Store(val IntT)
-	Swap(new IntT) (old IntT)
+type Pointer[T any] = Val[*T]
+
+type Val[T any] interface {
+	Load() T
+	Store(val T)
+	Swap(new T) (old T)
+	CompareAndSwap(old T, new T) (swapped bool)
+}
+
+type Integer[T constraints.Integer] interface {
+	Val[T]
+	Add(delta T) (new T)
+	And(mask T) (old T)
+	Or(mask T) (old T)
 }
 
 var (
@@ -22,4 +28,6 @@ var (
 	_ Integer[uint32]  = (*atomic.Uint32)(nil)
 	_ Integer[uint64]  = (*atomic.Uint64)(nil)
 	_ Integer[uintptr] = (*atomic.Uintptr)(nil)
+	_ Val[bool]        = (*atomic.Bool)(nil)
+	_ Pointer[any]     = (*atomic.Pointer[any])(nil)
 )
