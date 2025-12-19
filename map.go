@@ -1,60 +1,45 @@
 package gs
 
 import (
-	"sync"
+	"github.com/go4org/hashtriemap"
 )
 
 type Map[K comparable, V any] struct {
-	underlying sync.Map
+	u hashtriemap.HashTrieMap[K, V]
 }
 
 func (m *Map[K, V]) CompareAndDelete(key K, old V) (deleted bool) {
-	return m.underlying.CompareAndDelete(key, old)
+	return m.u.CompareAndDelete(key, old)
 }
 
 func (m *Map[K, V]) CompareAndSwap(key K, old V, new V) (swaped bool) {
-	return m.underlying.CompareAndSwap(key, old, new)
+	return m.u.CompareAndSwap(key, old, new)
 }
 
 func (m *Map[K, _]) Delete(key K) {
-	m.underlying.Delete(key)
+	m.u.Delete(key)
 }
 
 func (m *Map[K, V]) Load(key K) (value V, found bool) {
-	v, found := m.underlying.Load(key)
-	if !found {
-		return value, found
-	}
-	return v.(V), found
+	return m.u.Load(key)
 }
 
 func (m *Map[K, V]) LoadAndDelete(key K) (value V, loaded bool) {
-	v, loaded := m.underlying.LoadAndDelete(key)
-	if !loaded {
-		return value, loaded
-	}
-	return v.(V), loaded
+	return m.u.LoadAndDelete(key)
 }
 
 func (m *Map[K, V]) LoadOrStore(key K, value V) (actual V, loaded bool) {
-	v, loaded := m.underlying.LoadOrStore(key, value)
-	return v.(V), loaded
+	return m.u.LoadOrStore(key, value)
 }
 
 func (m *Map[K, V]) Range(f func(key K, value V) bool) {
-	m.underlying.Range(func(k, v any) bool {
-		return f(k.(K), v.(V))
-	})
+	m.u.Range(f)
 }
 
 func (m *Map[K, V]) Store(key K, value V) {
-	m.underlying.Store(key, value)
+	m.u.Store(key, value)
 }
 
 func (m *Map[K, V]) Swap(key K, value V) (previous V, loaded bool) {
-	v, loaded := m.underlying.Swap(key, value)
-	if !loaded {
-		return previous, loaded
-	}
-	return v.(V), loaded
+	return m.u.Swap(key, value)
 }
